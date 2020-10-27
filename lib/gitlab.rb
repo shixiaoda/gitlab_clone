@@ -77,7 +77,7 @@ class Gitlab
   end
 
   def self.get_groups
-    string = HTTParty.get("#{Setup.get_gitlabserver}/groups", :headers => {"PRIVATE-TOKEN" => "#{Setup.get_token}" }, :verify => false).to_json
+    string = HTTParty.get("#{Setup.get_gitlabserver}/groups", :headers => {"PRIVATE-TOKEN" => "#{Setup.get_token}" }, :query => {per_page: '100'}, :verify => false).to_json
     api_ids = JSON.parse(string)
     group_ids = {}
     api_ids.each do |id|
