@@ -3,7 +3,7 @@ class Gitlab
   require "rainbow"
 
   user_home = ENV['HOME']
-  user_defined_dir = "code" ### need to add the ability to set this dynamically
+  user_defined_dir = "BabyBusCode" ### need to add the ability to set this dynamically
   HOME = "#{user_home}/#{user_defined_dir}"
 
   def self.printhelp
@@ -27,7 +27,18 @@ class Gitlab
     puts Rainbow("-------------------------------------------------------------------\n").green
     puts Rainbow("\tThe following #{repos_list["projects"].length} repo(s) were found in the group #{group_name}.").green
     repos_list["projects"].length.times do |get|
-      puts Rainbow("\t\t#{repos_list["projects"][get]["name"]}").blue
+      puts Rainbow("\t\t#{repos_list[get]["name"]}").blue
+    end
+    puts Rainbow("\n-------------------------------------------------------------------").green
+  end
+
+  def self.list_groups()
+    groups_list = get_groupsInfo()
+    puts Rainbow("-------------------------------------------------------------------\n").green
+    puts Rainbow("The following #{groups_list.length} group(s) were found.").green
+    puts Rainbow("group_id\tgroup_name \t\t\tgroup_full_path").green
+    groups_list.each do |group|
+      puts Rainbow("#{group["id"]}\t \t#{group["name"]}\t \t \t#{group["full_path"]}").blue
     end
     puts Rainbow("\n-------------------------------------------------------------------").green
   end
@@ -84,6 +95,12 @@ class Gitlab
       group_ids["#{id["name"]}"] = id["id"]
     end
     return group_ids
+  end
+
+    def self.get_groupsInfo
+    string = HTTParty.get("#{Setup.get_gitlabserver}/groups", :headers => {"PRIVATE-TOKEN" => "#{Setup.get_token}" }, :query => {per_page: '100', statistics: true}, :verify => false).to_json
+    api_ids = JSON.parse(string)
+    return api_ids
   end
 
   def self.config

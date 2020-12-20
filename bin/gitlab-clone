@@ -19,6 +19,7 @@ class GitlabClone
       o.bool '-c', '--clone', 'clone'
       o.bool '-w', '--web', 'web'
       o.bool '-l', '--list', 'list'
+      o.bool '-gl', '--grouplist', 'grouplist'
       o.bool '-v', '--version', 'version'
       o.string '-g', '--group', 'group'
       o.bool '-o', '--github', 'github'
@@ -79,6 +80,8 @@ class GitlabClone
           Gitlab.config
         elsif opts[:list]
           class_to_use.list_repos(clone_group)
+        elsif opts[:grouplist]
+          class_to_use.list_groups()
         end
       rescue
         puts Rainbow("Looks like there was an issue. Please verify host and api version with \"#{File.basename($0)} -n\" to show configuration.").red.italic
